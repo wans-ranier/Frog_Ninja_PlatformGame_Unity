@@ -1,0 +1,36 @@
+EU: "mas isso não explica o problema anteriror o inimigo aparentemente não está tocando em nada e fica trocando de direção sem motivo"
+
+
+GitHub Copilot
+Você está certo, o problema pode não estar nas colisões, mas sim na lógica do método Moviment() da classe EnemySimple.
+Veja o trecho relevante:
+
+EnemySimple.cs
+Possíveis causas para inversão constante de direção
+Linecast sempre detectando colisão:
+Se o Linecast entre Rightcol.position e Leftcol.position está sempre colidindo com algo na LayerMask collidingWall, o inimigo vai inverter a direção toda vez que o Moviment() for chamado (todo frame).
+
+Posicionamento dos pontos Rightcol e Leftcol:
+Se esses pontos estão posicionados de forma que o Linecast sempre intersecta o próprio inimigo ou outro collider próximo, a colisão será detectada constantemente.
+
+LayerMask configurada incorretamente:
+Se a LayerMask collidingWall inclui a layer do próprio inimigo ou de objetos que não deveriam ser considerados "paredes", o Linecast pode detectar colisão errada.
+
+Como corrigir
+1. Garanta que Rightcol e Leftcol estão posicionados corretamente
+Eles devem estar nas extremidades do inimigo, um à direita e outro à esquerda, fora do próprio collider do inimigo.
+
+2. Ajuste a LayerMask
+Certifique-se de que apenas paredes/plataformas estão na LayerMask collidingWall, e não o próprio inimigo ou outros objetos indesejados.
+
+3. Ignore o próprio collider no Linecast
+Você pode usar Physics2D.Linecast com um parâmetro extra para ignorar o próprio collider do inimigo:
+
+EnemySimple.cs
+Resumo:
+O problema provavelmente está no Linecast detectando colisão errada.
+
+Verifique o posicionamento dos pontos.
+Ajuste a LayerMask.
+Ignore o próprio collider no Linecast.
+Essas ações devem resolver o problema do inimigo inverter direção sem motivo aparente.
